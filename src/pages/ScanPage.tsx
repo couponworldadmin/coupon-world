@@ -1,37 +1,48 @@
 import { useNow } from '../hooks/useNow';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import type { CouponValidation } from '../lib/supabase';
-import { markCouponUsedById, validateCouponById } from '../lib/supabase';
+import type { CouponPreview } from '../lib/supabase';
+import { markCouponUsedById, getCouponPreview } from '../lib/supabase';
 import { useToast } from '../components/Toast';
 import { useAuth } from '../context/AuthContext';
 
 export default function ScanPage() {
+  const { code } = useParams<{ code: string }>();
+  const { user } = useAuth();
+  // Reset private reveal and retry state before an identity or voucher change renders.
+  return <ScanCheckpoint key={`${code}:${user?.id ?? 'anonymous'}`} />;
+}
+
+function ScanCheckpoint() {
   const now = useNow();
   const { code } = useParams<{ code: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
   const { success, error: toastError } = useToast();
-  const [data, setData] = useState<CouponValidation | null>(null);
+  const [data, setData] = useState<CouponPreview | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [marking, setMarking] = useState(false);
   const [marked, setMarked] = useState(false);
+  const [revealedCode, setRevealedCode] = useState('');
+  const request = useRef<{ scope: string; id: string } | null>(null);
 
   useEffect(() => {
+    let cancelled = false;
     async function load() {
-      if (!code) return;
+      if (!code) { setError('Invalid coupon link'); setLoading(false); return; }
       try {
-        const result = await validateCouponById(code);
-        setData(result);
+        const result = await getCouponPreview(code);
+        if (!cancelled) setData(result);
       } catch (err: any) {
-        setError(err.message ?? 'Invalid coupon link');
+        if (!cancelled) setError(err.message ?? 'Invalid coupon link');
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }
 
     load();
+    return () => { cancelled = true; };
   }, [code]);
 
   async function handleMarkUsed() {
@@ -43,9 +54,12 @@ export default function ScanPage() {
     setMarking(true);
 
     try {
-      const revealedCode = await markCouponUsedById(code);
+      const scope = `${user.id}:${code}`;
+      if (request.current?.scope !== scope) request.current = { scope, id: crypto.randomUUID() };
+      const revealedCode = await markCouponUsedById(code, request.current.id);
+      setRevealedCode(revealedCode);
       setData((previous) =>
-        previous ? { ...previous, is_used: true, coupon_code: revealedCode } : previous,
+        previous ? { ...previous, is_used: true, can_redeem: false, status: 'redeemed' } : previous,
       );
       setMarked(true);
       success('Voucher redeemed', 'The coupon has been marked as used successfully.');
@@ -58,7 +72,7 @@ export default function ScanPage() {
       ) {
         friendlyMsg = `Redemption unauthorized: Only the recipient of this coupon, an authorized merchant from ${data?.company_name || 'the issuing company'}, or an administrator can redeem it. (Currently signed in as ${user.email})`;
       }
-      setError(friendlyMsg);
+      // Keep the scan and request ID available for a safe retry after network errors.
       toastError('Redemption failed', friendlyMsg);
     } finally {
       setMarking(false);
@@ -70,7 +84,7 @@ export default function ScanPage() {
   const destination = data?.redemption_destination;
   const isDestinationMismatch = !!data && destination !== 'couponvault';
   const isUnclassified = !!data && !destination;
-  const isActive = !!data && !isUsed && !isExpired && !isDestinationMismatch && data.status?.toLowerCase() === 'active' && Number(data.remaining_balance) > 0;
+  const isActive = !!data && !isUsed && !isExpired && !isDestinationMismatch && data.status?.toLowerCase() === 'active' && data.can_redeem;
   
   let statusLabel = isUsed ? 'Already redeemed' : isExpired ? 'Expired' : isActive ? 'Valid and active' : 'Unavailable';
   let destinationNotice = '';
@@ -174,18 +188,15 @@ export default function ScanPage() {
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
                   <div>
-                    <div style={{ color: 'var(--text-3)', fontSize: '0.85rem' }}>Issued</div>
+                    <div style={{ color: 'var(--text-3)', fontSize: '0.85rem' }}>Expiry</div>
                     <div style={{ fontWeight: 700 }}>
-                      {new Date(data.issued_at).toLocaleString('en-GB', {
-                        dateStyle: 'medium',
-                        timeStyle: 'short',
-                      })}
+                      {data.expiry_date ? new Date(data.expiry_date).toLocaleDateString('en-GB') : 'No expiry specified'}
                     </div>
                   </div>
                   <div>
                     <div style={{ color: 'var(--text-3)', fontSize: '0.85rem' }}>Reference code</div>
                     <div className="mono" style={{ fontWeight: 700 }}>
-                      {isUsed ? data.coupon_code : 'Locked until redeemed'}
+                      {revealedCode || 'Locked until redeemed'}
                     </div>
                   </div>
                 </div>

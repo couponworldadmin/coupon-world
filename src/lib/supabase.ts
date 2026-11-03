@@ -157,6 +157,16 @@ export interface Order {
   coupon?: { code: string; amount?: number; country_code?: string; expiry_date?: string; is_used: boolean; remaining_balance: number; status: string } | null;
 }
 
+export interface CouponPreview {
+  coupon_id: string;
+  company_name: string;
+  is_used: boolean;
+  expiry_date: string | null;
+  status: string;
+  redemption_destination?: RedemptionDestination | null;
+  can_redeem: boolean;
+}
+
 export interface CouponValidation {
   company_name: string;
   coupon_code: string;
@@ -672,6 +682,13 @@ export async function getCompanyCoupons(companyId: string): Promise<Coupon[]> {
 
 // ---- Scanner / Validation / Redemption API -----------------------
 
+export async function getCouponPreview(reference: string): Promise<CouponPreview> {
+  const { data, error } = await supabase.rpc('get_coupon_preview', { p_reference: reference.trim() });
+  if (error) throw error;
+  if (!data?.[0]) throw new Error('Invalid coupon link');
+  return data[0] as CouponPreview;
+}
+
 export async function validateCoupon(code: string): Promise<CouponValidation> {
   const { data, error } = await supabase.rpc("validate_coupon", {
     p_code: code.toUpperCase().trim(),
@@ -707,28 +724,21 @@ export async function redeemCouponCv(
   return data;
 }
 
-export async function redeemCouponAmount(couponId: string, amount: number, _options: { allowFallback?: boolean } = {}): Promise<{ remaining_balance: number; status: string }> {
-  const { data, error } = await withTimeout(supabase.rpc('redeem_coupon_amount', { p_coupon_id: couponId, p_amount: amount }));
+export async function redeemCouponAmount(couponId: string, amount: number, requestId: string): Promise<{ remaining_balance: number; status: string }> {
+  const { data, error } = await withTimeout(supabase.rpc('redeem_coupon_once', {
+    p_coupon_id: couponId, p_amount: amount, p_request_id: requestId,
+  }));
   if (error) throw error;
-  if (!data?.[0]) throw new Error('Redemption was not confirmed.');
-  return { remaining_balance: Number(data[0].remaining_balance), status: data[0].status };
+  if (!data || typeof data.remaining_balance !== 'number') throw new Error('Redemption was not confirmed.');
+  return data;
 }
-export async function markCouponUsedById(id: string): Promise<string> {
+
+export async function markCouponUsedById(id: string, requestId: string): Promise<string> {
   const coupon = await validateCouponById(id);
-  if (coupon.redemption_destination && coupon.redemption_destination !== 'couponvault') {
-    throw new Error(`This coupon is restricted to ${coupon.redemption_destination} and cannot be redeemed in CouponVault.`);
-  }
-  if (!coupon.redemption_destination) {
-    throw new Error('This coupon has no assigned redemption destination and cannot be redeemed.');
-  }
-  if (!coupon.remaining_balance || coupon.remaining_balance <= 0) throw new Error('No coupon balance remains.');
-  const resolvedCouponId = coupon.coupon_id;
-  try {
-    const reqId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : '00000000-0000-0000-0000-' + Date.now().toString().slice(-12);
-    await redeemCouponCv(resolvedCouponId, reqId);
-  } catch {
-    await redeemCouponAmount(resolvedCouponId, coupon.remaining_balance);
-  }
+  // Only the server decides eligibility. Retrying a confirmed request must still work
+  // when its balance is already zero. Never fall back to a second financial route.
+  const result = await redeemCouponCv(coupon.coupon_id, requestId);
+  if (!result || Number(result.remaining_balance) !== 0) throw new Error('Redemption was not confirmed.');
   return coupon.coupon_code;
 }
 
@@ -762,9 +772,8 @@ export async function getRedemptionTransactions(couponId?: string, companyId?: s
 }
 
 // Deprecated old coupon methods kept for compatibility with existing tests/shims
-export async function markCouponUsed(code: string): Promise<void> {
-  const validation = await validateCoupon(code);
-  await redeemCouponAmount(validation.coupon_id, validation.remaining_balance);
+export async function markCouponUsed(code: string, requestId: string): Promise<void> {
+  await markCouponUsedById(code, requestId);
 }
 
 export async function issueCoupon(

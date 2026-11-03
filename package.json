@@ -10,7 +10,7 @@
     "test:workflows": "node --test tests/workflows.test.cjs",
     "preview": "vite preview",
     "test:checkout-db": "node --test tests/checkout-db.test.cjs",
-    "test:security": "node --test tests/authorization-db.test.cjs tests/csp.test.cjs tests/paypal-frame.test.cjs tests/company-privacy-db.test.cjs"
+    "test:security": "node --test tests/authorization-db.test.cjs tests/csp.test.cjs tests/paypal-frame.test.cjs tests/company-privacy-db.test.cjs tests/redemption-security-db.test.cjs tests/redemption-client.test.cjs"
   },
   "dependencies": {
     "@paypal/react-paypal-js": "^10.2.1",
