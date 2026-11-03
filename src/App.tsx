@@ -68,12 +68,8 @@ function App() {
             <SupportWidget />
             <Suspense fallback={<LoadingPage message="Loading application..." />}>
               <Routes>
-                {/* MED-04: Scan/validation page requires authentication to prevent code enumeration */}
-              <Route path="/coupon/:code" element={
-                <ProtectedRoute>
-                  <ScanPage />
-                </ProtectedRoute>
-              } />
+                {/* Public scans use a status-only projection. Private validation and redemption require authorization. */}
+                <Route path="/coupon/:code" element={<ScanPage />} />
               <Route path="/store" element={<DemoStorePage />} />
 
                 {/* App Layout Framework */}
