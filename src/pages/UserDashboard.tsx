@@ -1,3 +1,5 @@
+import { SecurePaypalButtons as PayPalButtons } from '../components/SecurePaypalButtons';
+import { paypalClientId, paypalConfigured } from '../lib/paymentConfiguration';
 import { formatOfferDate } from '../lib/couponOffer';
 import { normalizeCardBackground, DEFAULT_CARD_BACKGROUND } from '../lib/cardBackgrounds';
 import { voucherState } from '../lib/voucherState';
@@ -11,7 +13,6 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../components/Toast';
 import { DashboardCard } from '../components/GlassCard';
 import { LoadingPage } from '../components/LoadingPage';
-import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js';
 import PaymentMethodSelector from '../components/PaymentMethodSelector';
 import type { PaymentGateway } from '../lib/paymentGateway';
 import {
@@ -815,7 +816,7 @@ export default function UserDashboard() {
   };
 
   return (
-    <PayPalScriptProvider key={userCurrency} deferLoading={!userCountryCode || ["INR", "AED"].includes(userCurrency)} options={{ clientId: import.meta.env.VITE_PAYPAL_CLIENT_ID || "test", currency: userCurrency, intent: "capture" }}>
+    <>
       <div className="dashboard-container">
       {pendingStripeIntent && <div className="glass-card" role="status" style={{ padding:'1rem', marginBottom:'1rem' }}>
         <p>A Stripe payment needs verification. Check its status before paying again.</p>
@@ -2725,7 +2726,8 @@ export default function UserDashboard() {
                   </div>
                 )}
 
-                {/* ── PayPal UI (original flow preserved) ── */}
+                {selectedGateway === 'paypal' && !paypalConfigured && <p role="status">PayPal is unavailable. Please select another configured payment method.</p>}
+                {/* PayPal verification of saved orders remains available without loading its SDK. */}
                 {pendingPayPalOrder && <button className="btn btn-secondary" disabled={addMoneyLoading} onClick={async () => {
                   setAddMoneyLoading(true);
                   try {
@@ -2739,8 +2741,8 @@ export default function UserDashboard() {
                   } catch (err) { toastError('Credit pending', getErrorMessage(err, 'Retry verification later; do not pay again.')); }
                   finally { setAddMoneyLoading(false); }
                 }}>Retry payment verification</button>}
-                {selectedGateway === 'paypal' && !pendingPayPalOrder && (
-                <PayPalButtons
+                {selectedGateway === 'paypal' && paypalConfigured && !pendingPayPalOrder && (
+                <PayPalButtons clientId={paypalClientId!} currency={userCurrency}
                   style={{ layout: "vertical", color: "blue", shape: "rect", label: "pay" }}
                   createOrder={async () => {
                     const amount = Number(addMoneyAmount);
@@ -2776,6 +2778,6 @@ export default function UserDashboard() {
         document.body
       )}
     </div>
-    </PayPalScriptProvider>
+    </>
   );
 }

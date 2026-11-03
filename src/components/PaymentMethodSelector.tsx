@@ -1,3 +1,4 @@
+import { paypalConfigured } from '../lib/paymentConfiguration';
 // src/components/PaymentMethodSelector.tsx
 // Country-aware payment method selector.
 // Shows only the gateways supported for the user's country, in recommended order.
@@ -65,7 +66,7 @@ const ALL_OPTIONS: Record<PaymentGateway, Omit<PaymentOption, 'description' | 'c
     logo:        <PayPalLogo />,
     color:       '#003087',
     bgGradient:  'linear-gradient(135deg, rgba(0,48,135,0.07) 0%, rgba(0,156,222,0.07) 100%)',
-    configured:  true,
+    configured:  paypalConfigured,
   },
   razorpay: {
     id:          'razorpay',

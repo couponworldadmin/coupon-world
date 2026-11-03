@@ -1,6 +1,7 @@
 import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
+import { cspMetaPolicy, cspHeaderPolicy } from './security/csp.mjs'
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
@@ -9,10 +10,20 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [
+      {
+        name: 'production-content-security-policy',
+        apply: 'build',
+        transformIndexHtml: {
+          order: 'post',
+          handler(html) {
+            return html.replace('<meta charset="UTF-8" />', `<meta charset="UTF-8" /><meta http-equiv="Content-Security-Policy" content="${cspMetaPolicy}" />`);
+          },
+        },
+      },
       tailwindcss(),
       react(),
     ],
-    // build config removed for typing fix
+    preview: { headers: { 'Content-Security-Policy': cspHeaderPolicy } },
     server: supabaseUrl && supabaseAnonKey
       ? {
           proxy: {

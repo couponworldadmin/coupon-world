@@ -1,4 +1,5 @@
 import express from 'express';
+import { paypalFrame } from './paypalFrame';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
@@ -526,6 +527,15 @@ app.get('/api/v1/payments/gateways', (req, res) => {
  * Body: { gateway: 'razorpay'|'stripe'|'paypal', amount: number, currency?: string }
  * Authorization: Bearer <supabase_access_token>
  */
+// Isolated payment UI. No customer tokens, financial state or redemption privileges are exposed to this frame.
+app.get('/api/v1/payments/paypal/frame', (req,res) => {
+ try {
+  const {html,csp}=paypalFrame({origin:String(req.query.origin||''),channel:String(req.query.channel||''),currency:String(req.query.currency||''),clientId:process.env.PAYPAL_CLIENT_ID||''},allowedOrigins);
+  res.removeHeader('X-Frame-Options');
+  return res.set({'Content-Security-Policy':csp,'Cache-Control':'no-store','Referrer-Policy':'no-referrer','Cross-Origin-Opener-Policy':'same-origin-allow-popups'}).type('html').send(html);
+ } catch {return res.status(503).type('text').send('PayPal checkout is unavailable. Please select another payment method.');}
+});
+
 app.post('/api/v1/payments/stripe/recover', writeLimiter, authenticateUserJWT, async (req, res) => {
   try {
     const { intentId } = req.body;

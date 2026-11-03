@@ -34,7 +34,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" />
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 
     <!-- Structured Data -->
     <script type="application/ld+json">
@@ -53,12 +53,7 @@
     </script>
 
     <!-- Block FOUC: apply theme before paint -->
-    <script>
-      (function() {
-        var theme = localStorage.getItem('cv-theme') || 'light';
-        document.documentElement.setAttribute('data-theme', theme);
-      })();
-    </script>
+    <script src="/theme-init.js"></script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

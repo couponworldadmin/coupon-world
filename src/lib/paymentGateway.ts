@@ -1,6 +1,6 @@
 // src/lib/paymentGateway.ts
 // Client-side helpers for Razorpay and Stripe.
-// PayPal is handled by @paypal/react-paypal-js directly.
+// PayPal buttons run in the isolated API checkout frame.
 
 import { loadStripe, type Stripe } from '@stripe/stripe-js';
 

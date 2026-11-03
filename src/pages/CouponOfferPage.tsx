@@ -1,3 +1,5 @@
+import { SecurePaypalButtons as PayPalButtons } from '../components/SecurePaypalButtons';
+import { validPaypalClientId, paypalClientId } from '../lib/paymentConfiguration';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import type { StripeElements, StripePaymentElement } from '@stripe/stripe-js';
@@ -9,7 +11,6 @@ import { getCouponOfferDetails, getUserProfileData, purchaseGiftCardOnce } from 
 import type { CouponOfferDetails } from '../lib/supabase';
 import { formatCurrency } from '../lib/exchangeRate';
 import { getCountryByCode, getGatewaysForCountry } from '../lib/countries';
-import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js';
 import { cardBackgroundImage } from '../lib/cardBackgrounds';
 import { formatOfferDate, offerUnavailable } from '../lib/couponOffer';
 import { getDestinationMeta } from '../lib/destinationConfig';
@@ -72,12 +73,12 @@ function CouponOffer({ id }: { id: string }) {
   const gateways = useMemo(() => {
     const countryCode = card?.country_code || 'IN';
     const priority = getGatewaysForCountry(countryCode);
-    return [...availableGateways].sort((a, b) => {
+    return availableGateways.filter(g => g !== 'paypal' || !!validPaypalClientId(gatewayConfig.paypal?.clientId || paypalClientId)).sort((a, b) => {
       const ia = priority.indexOf(a);
       const ib = priority.indexOf(b);
       return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
     });
-  }, [availableGateways, card?.country_code]);
+  }, [availableGateways, card?.country_code, gatewayConfig]);
 
   useEffect(() => {
     let active = true;
@@ -253,15 +254,7 @@ function CouponOffer({ id }: { id: string }) {
   if (loadError || !details || !card) return <section className="coupon-offer-page"><Link to="/dashboard/marketplace" className="btn btn-secondary">Back to marketplace</Link><div className="card offer-section"><h1>Coupon unavailable</h1><p role="alert">{loadError || 'This coupon is not available for your country, or has been removed.'}</p><button className="btn btn-secondary" onClick={() => window.location.reload()}>Try again</button></div></section>;
 
   return (
-    <PayPalScriptProvider
-      key={currency}
-      options={{
-        clientId: gatewayConfig.paypal?.clientId || import.meta.env.VITE_PAYPAL_CLIENT_ID || 'test',
-        currency: currency,
-        intent: 'capture',
-      }}
-      deferLoading={!currency || ['INR', 'AED'].includes(currency)}
-    >
+    <>
       <section className="coupon-offer-page">
     <Link to="/dashboard/marketplace" className="offer-back"><ArrowLeft size={17} /> Back to marketplace</Link>
     <header className="offer-hero" style={{backgroundImage:cardBackgroundImage(card.banner_image,true)}}>
@@ -385,13 +378,14 @@ function CouponOffer({ id }: { id: string }) {
             </div>
           )}
           {pending && <p className="offer-note" role="status">You have a saved checkout. Resume or verify this payment before paying again.</p>}
-          {!pending && gateway === 'paypal' && !['INR', 'AED'].includes(currency) && (
+          {(!pending || pending.gateway === 'paypal') && gateway === 'paypal' && !!validPaypalClientId(gatewayConfig.paypal?.clientId || paypalClientId) && !['INR', 'AED'].includes(currency) && (
             <div className="offer-paypal-box" style={{ marginTop: '0.75rem' }}>
-              <PayPalButtons
+              <PayPalButtons clientId={validPaypalClientId(gatewayConfig.paypal?.clientId || paypalClientId)!} currency={currency}
                 style={{ layout: "vertical", color: "blue", shape: "rect", label: "pay" }}
-                disabled={busy || !card || !!unavailable}
+                disabled={busy || !card || (!pending && !!unavailable)}
                 createOrder={async () => {
                   if (!card) throw new Error('Offer unavailable.');
+                  if (pending?.gateway === 'paypal') return pending.orderId;
                   const next = await createCouponPayment('paypal', card.id, Number(card.price));
                   savePending({ gateway: 'paypal', orderId: next.orderId });
                   setOrder(next);
@@ -452,6 +446,6 @@ function CouponOffer({ id }: { id: string }) {
       </aside>
     </div>
   </section>
-  </PayPalScriptProvider>
+  </>
   );
 }

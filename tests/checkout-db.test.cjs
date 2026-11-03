@@ -27,6 +27,9 @@ before(async()=>{
  ALTER TABLE payment_transactions ENABLE ROW LEVEL SECURITY;
  REVOKE ALL ON payment_transactions,payment_credits,profiles,coupons,orders FROM anon,authenticated;`);
  await db.exec(migration);
+ await db.exec(`CREATE FUNCTION public.is_admin() RETURNS boolean LANGUAGE sql STABLE AS $$SELECT false$$;
+ CREATE FUNCTION public.is_account_active(id uuid) RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path=public AS $$SELECT EXISTS(SELECT 1 FROM profiles WHERE profiles.id=$1 AND NOT is_locked)$$;`);
+ await db.exec(fs.readFileSync('supabase/migrations/20261103073504_security_authorization_guards.sql','utf8'));
 });
 after(()=>db.close());
 beforeEach(async()=>{

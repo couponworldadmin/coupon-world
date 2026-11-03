@@ -307,3 +307,24 @@ test('login page inspects returnPath query parameter and redirects safe voucher 
   // Verify emailRedirectTo preserves returnPath
   assert.match(loginSource, /login\?returnPath=\$\{encodeURIComponent\(returnPath\)\}/);
 });
+
+test('database outages never use browser demo data, even when configuration is missing',async()=>{
+ for(const name of ['getCompanies','getGiftCards','getUserOrders','getUserGiftCards','adminGetSettlements','merchantGetSettlements','redeemCouponCv']){
+  const q=query({data:null,error:Error('Database unavailable')});q.rpc=()=>q;
+  const fn=helper(name,{isSupabaseConfigured:false,hasTimedOut:false,withTimeout:async()=>{throw Error('Database unavailable');},supabase:{rpc:()=>q,from:()=>q},getLocal:()=>{throw Error('Demo database was read');},console});
+  await assert.rejects(fn('user','request'),/unavailable/,name);
+ }
+});
+test('legacy cleanup removes only obsolete database keys and tolerates disabled storage',()=>{
+ const {clearLegacyDemoData}=compile(fs.readFileSync(path.join(root,'src/lib/legacyDemoData.ts'),'utf8'),{});const removed=[];
+ clearLegacyDemoData({removeItem:key=>removed.push(key)});assert.ok(removed.includes('cv_coupons'));assert.ok(removed.includes('cv_orders'));assert.ok(!removed.some(k=>/pending|theme|auth|paypal_email/.test(k)));
+ assert.doesNotThrow(()=>clearLegacyDemoData({removeItem:()=>{throw Error('Storage disabled');}}));
+});
+test('PayPal does not initialize its SDK with test or missing client IDs',()=>{
+ const source=fs.readFileSync(path.join(root,'src/lib/paymentConfiguration.ts'),'utf8');const tree=ts.createSourceFile('config.ts',source,ts.ScriptTarget.Latest,true);
+ const {validPaypalClientId}=compile(tree.statements.find(n=>ts.isFunctionDeclaration(n)).getText(tree),{});
+ for(const invalid of [null,undefined,'','test','sb','REPLACE_WITH_PAYPAL_CLIENT_ID','placeholder_client_id_123456789','<script>bad_configuration</script>'])assert.equal(validPaypalClientId(invalid),null);
+ assert.equal(validPaypalClientId('A'.repeat(80)),'A'.repeat(80));
+ assert.doesNotMatch(fs.readFileSync(path.join(root,'src/components/SecurePaypalButtons.tsx'),'utf8'),/from ['"]@paypal/);
+ for(const file of ['src/pages/UserDashboard.tsx','src/pages/CouponOfferPage.tsx'])assert.doesNotMatch(fs.readFileSync(path.join(root,file),'utf8'),/clientId:.*(?:\|\||\?\?).*['"]test['"]/);
+});
