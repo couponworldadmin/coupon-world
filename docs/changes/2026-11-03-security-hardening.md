@@ -80,3 +80,7 @@ The user subsequently requested that the three findings on coupon-5mul be resolv
 - Render's automatic dependency installation reported 14 dependency advisories (12 moderate, 2 high). The redirect artifact uses only Node built-ins and publishes none of those packages. This task does not establish dependency clearance or full payment integrity for the separate primary application.
 
 Evidence screenshot: coupon-legacy-security-headers.jpg in the session visualization artifacts. The primary app's separate HTTP CSP header and Pro-only leaked-password protection remain the previously documented outstanding items.
+
+## Subsequent company-listing and HTTP CSP closure
+
+The follow-up recorded in [company privacy and CSP verification](2026-11-03-company-privacy-followup.md) closes anonymous get_companies execution and the primary site's missing HTTP CSP header. The earlier statements that this HTTP header was outstanding describe the state before this follow-up. Live anonymous RPC requests now return HTTP 401/42501, and the primary homepage/login return the exact tested CSP header. Leaked-password protection remains the separate plan-dependent setting described above.
