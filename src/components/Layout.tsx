@@ -1,3 +1,4 @@
+import { BrandMark } from './BrandMark';
 import { useEffect, type ReactNode } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { Sun, Moon, ShoppingBag, Wallet, Activity, CreditCard } from 'lucide-react';
@@ -60,7 +61,7 @@ export function Layout({ children }: LayoutProps = {}) {
         <div className="w-full bg-[var(--surface)] border-b border-[var(--border)] relative z-30 transition-all duration-300">
           <header className="layout-dashboard-header flex flex-row items-center justify-between gap-4 p-4 md:px-8 max-w-[1600px] mx-auto w-full" role="banner">
             <div className="flex items-center gap-3">
-              <Link to="/" className="sidebar-brand-mark flex items-center justify-center font-extrabold text-white no-underline w-9 h-9 rounded-xl shrink-0 transition-transform hover:scale-105" style={{ background: currentPortal === 'customer' ? 'var(--gradient-primary)' : currentPortal === 'merchant' ? 'var(--gradient-merchant)' : 'var(--gradient-admin)', boxShadow: 'var(--primary-glow)' }}>C</Link>
+              <Link to="/" aria-label="CouponWorld home" className="sidebar-brand-mark flex items-center justify-center no-underline shrink-0 transition-transform hover:scale-105"><BrandMark size={36} /></Link>
               <div className="hidden md:block">
                 <h1 className="layout-dashboard-title text-base font-bold m-0" style={{ lineHeight: '1.2' }}>
                   {currentPortal === 'admin'
@@ -138,7 +139,7 @@ export function Layout({ children }: LayoutProps = {}) {
       <header className="layout-public-header" role="banner">
         <div className="app-shell layout-public-shell flex justify-between items-center py-4">
           <Link to="/" className="layout-brand flex items-center gap-3">
-            <div className="layout-brand-mark w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-lg" style={{ background: 'var(--gradient-primary)' }} aria-hidden="true">C</div>
+            <BrandMark size={36} />
             <div className="layout-brand-copy flex flex-col">
               <strong className="layout-brand-title text-base md:text-lg">CouponWorld</strong>
               <span className="layout-brand-subtitle text-xs md:text-sm text-gray-500">Premium digital gifting</span>

@@ -1,3 +1,4 @@
+import { BrandMark } from '../components/BrandMark';
 import React, { useState } from 'react';
 import { Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -270,7 +271,7 @@ export function LoginPage() {
         <div className={formCardClass}>
           <div style={{ marginBottom: '1.5rem' }}>
             <div className="auth-brand-row">
-              <div className="auth-brand-mark">C</div>
+              <BrandMark size={44} />
               <div>
                 <div style={{ fontWeight: 700, fontSize: '1rem' }}>CouponWorld</div>
                 <div style={{ color: 'var(--text-3)', fontSize: '0.78rem' }}>{routeLabel}</div>

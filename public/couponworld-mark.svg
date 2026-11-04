@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none">
+  <title>CouponWorld</title>
+  <defs>
+    <linearGradient id="tile" x1="12" y1="4" x2="88" y2="96" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#a855f7"/>
+      <stop offset=".5" stop-color="#7c3aed"/>
+      <stop offset="1" stop-color="#4f46e5"/>
+    </linearGradient>
+  </defs>
+  <rect width="96" height="96" rx="24" fill="url(#tile)"/>
+  <rect x="1" y="1" width="94" height="94" rx="23" stroke="white" stroke-opacity=".16" stroke-width="2"/>
+  <g transform="rotate(-12 48 48)">
+    <path d="M26 26h44a6 6 0 0 1 6 6v8a8 8 0 0 0 0 16v8a6 6 0 0 1-6 6H26a6 6 0 0 1-6-6v-8a8 8 0 0 0 0-16v-8a6 6 0 0 1 6-6Z" fill="white"/>
+    <g stroke="#7538df" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="48" cy="48" r="14"/>
+      <ellipse cx="48" cy="48" rx="6" ry="14"/>
+      <path d="M34 48h28M37 40.5c6.5 3 15.5 3 22 0M37 55.5c6.5-3 15.5-3 22 0"/>
+    </g>
+  </g>
+</svg>

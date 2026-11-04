@@ -1,3 +1,4 @@
+import { BrandMark } from '../components/BrandMark';
 import { useNow } from '../hooks/useNow';
 import { useEffect, useState, useRef } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
@@ -113,20 +114,8 @@ function ScanCheckpoint() {
     >
       <div style={{ width: '100%', maxWidth: '520px' }} className="fade-in">
         <div style={{ textAlign: 'center', marginBottom: '1.25rem' }}>
-          <div
-            style={{
-              width: '52px',
-              height: '52px',
-              margin: '0 auto 0.85rem',
-              borderRadius: '18px',
-              display: 'grid',
-              placeItems: 'center',
-              color: '#fff',
-              fontWeight: 800,
-              background: 'linear-gradient(135deg, var(--primary-container), var(--primary))',
-            }}
-          >
-            C
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.85rem' }}>
+            <BrandMark size={52} />
           </div>
           <div className="section-label" style={{ marginBottom: '0.4rem' }}>
             CouponWorld validator
