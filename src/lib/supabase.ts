@@ -10,7 +10,7 @@ export const isSupabaseConfigured =
 
 if (!isSupabaseConfigured) {
   console.warn(
-    "[CouponVault] VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY is not set.\n" +
+    "[CouponWorld] VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY is not set.\n" +
     "Copy .env.example to .env and add your Supabase credentials."
   );
 }
@@ -318,7 +318,7 @@ export async function submitOnboarding(companyData: Partial<Company>): Promise<C
     return getCompany(data.id);
   } catch (err: any) {
     if (isSupabaseConfigured) throw err;
-    console.error("[CouponVault] submitOnboarding failed on the live database:", err.message);
+    console.error("[CouponWorld] submitOnboarding failed on the live database:", err.message);
     throw new Error(err.message || "Database rejected the company profile. Check constraints or RLS policies.");
   }
 }
@@ -556,7 +556,7 @@ export async function deleteGiftCard(id: string): Promise<void> {
   const { data, error } = await supabase.from("gift_cards").delete().eq("id", id).select("id");
   
   if (error) {
-    console.error("[CouponVault] deleteGiftCard failed:", error);
+    console.error("[CouponWorld] deleteGiftCard failed:", error);
     if (error.code === '23503') { // foreign_key_violation
       throw new Error("Cannot delete this campaign because customers have already purchased vouchers from it.");
     }
@@ -1075,7 +1075,7 @@ export async function updateUserWalletBalance(_userId: string, _amount: number):
   // After a balance-changing operation, always call refreshWalletBalance() to
   // re-read the authoritative value from the server.
   console.warn(
-    '[CouponVault] updateUserWalletBalance() is deprecated and has no effect. ' +
+    '[CouponWorld] updateUserWalletBalance() is deprecated and has no effect. ' +
     'Use server-side RPCs for all balance modifications.'
   );
 }

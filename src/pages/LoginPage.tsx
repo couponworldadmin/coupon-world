@@ -38,7 +38,7 @@ export function LoginPage() {
   const [message, setMessage] = useState<{ type: 'error' | 'info'; text: string } | null>(null);
   const [selectedCountry, setSelectedCountry] = useState<CountryInfo | null>(null);
 
-  let loginTitle = 'Welcome back to CouponVault';
+  let loginTitle = 'Welcome back to CouponWorld';
   let loginSubtitle = 'Sign in to access your gift cards, balances, and redemptions.';
   let sideTitle = 'Premium gifting, without the friction';
   let sideBody =
@@ -67,7 +67,7 @@ export function LoginPage() {
   ];
 
   if (isSignUp) {
-    loginTitle = 'Create your CouponVault account';
+    loginTitle = 'Create your CouponWorld account';
     loginSubtitle = 'Set up secure access for your gift card wallet.';
   } else if (isCompanyRoute) {
     loginTitle = 'Company login access';
@@ -272,7 +272,7 @@ export function LoginPage() {
             <div className="auth-brand-row">
               <div className="auth-brand-mark">C</div>
               <div>
-                <div style={{ fontWeight: 700, fontSize: '1rem' }}>CouponVault</div>
+                <div style={{ fontWeight: 700, fontSize: '1rem' }}>CouponWorld</div>
                 <div style={{ color: 'var(--text-3)', fontSize: '0.78rem' }}>{routeLabel}</div>
               </div>
             </div>

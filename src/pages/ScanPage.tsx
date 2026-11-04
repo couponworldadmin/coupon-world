@@ -91,10 +91,10 @@ function ScanCheckpoint() {
   if (isDestinationMismatch) {
     if (destination === 'gaming') {
       statusLabel = 'Gaming application only';
-      destinationNotice = 'This coupon is restricted to the Gaming application and cannot be redeemed in CouponVault.';
+      destinationNotice = 'This coupon is restricted to the Gaming application and cannot be redeemed in CouponWorld.';
     } else if (destination === 'lottery') {
       statusLabel = 'Lottery application only';
-      destinationNotice = 'This coupon is restricted to the Lottery application and cannot be redeemed in CouponVault.';
+      destinationNotice = 'This coupon is restricted to the Lottery application and cannot be redeemed in CouponWorld.';
     } else if (isUnclassified) {
       statusLabel = 'Redemption unclassified';
       destinationNotice = 'This coupon has no assigned redemption destination and cannot be redeemed. Please contact support.';
@@ -129,7 +129,7 @@ function ScanCheckpoint() {
             C
           </div>
           <div className="section-label" style={{ marginBottom: '0.4rem' }}>
-            CouponVault validator
+            CouponWorld validator
           </div>
           <h1 style={{ margin: 0, fontSize: '2rem', letterSpacing: '0.02em', wordSpacing: '0.08em', }}>Redemption checkpoint</h1>
         </div>

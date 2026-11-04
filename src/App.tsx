@@ -63,7 +63,7 @@ function App() {
         <AuthProvider>
           <Router>
             <Helmet>
-              <title>CouponVault – Premium Gift Card Marketplace</title>
+              <title>CouponWorld – Premium Gift Card Marketplace</title>
             </Helmet>
             <SupportWidget />
             <Suspense fallback={<LoadingPage message="Loading application..." />}>

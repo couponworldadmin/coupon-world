@@ -67,7 +67,7 @@ export function Layout({ children }: LayoutProps = {}) {
                     ? 'Operations'
                     : currentPortal === 'merchant'
                       ? 'Workspace'
-                      : 'Coupon Vault'}
+                      : 'CouponWorld'}
                 </h1>
               </div>
             </div>
@@ -140,7 +140,7 @@ export function Layout({ children }: LayoutProps = {}) {
           <Link to="/" className="layout-brand flex items-center gap-3">
             <div className="layout-brand-mark w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-lg" style={{ background: 'var(--gradient-primary)' }} aria-hidden="true">C</div>
             <div className="layout-brand-copy flex flex-col">
-              <strong className="layout-brand-title text-base md:text-lg">Coupon Vault</strong>
+              <strong className="layout-brand-title text-base md:text-lg">CouponWorld</strong>
               <span className="layout-brand-subtitle text-xs md:text-sm text-gray-500">Premium digital gifting</span>
             </div>
           </Link>

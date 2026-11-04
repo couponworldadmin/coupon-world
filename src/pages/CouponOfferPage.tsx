@@ -192,7 +192,7 @@ function CouponOffer({ id }: { id: string }) {
           orderId: next.orderId,
           amountMinorUnit: next.amount,
           currency: next.currency,
-          name: 'CouponVault',
+          name: 'CouponWorld',
           description: card.title,
           prefillEmail: user?.email,
           theme: '#4f46e5',
@@ -262,7 +262,7 @@ function CouponOffer({ id }: { id: string }) {
     </header>
     <div className="offer-columns">
       <div className="offer-content">
-        <section className="card offer-section"><span className="section-label">About the company</span><h2>{details.company.name}</h2><dl className="offer-facts"><div><dt>Company status</dt><dd>Approved merchant</dd></div><div><dt>On CouponVault since</dt><dd>{formatOfferDate(details.company.joined_at)}</dd></div></dl><h3>Business address</h3><p>{details.company.address || 'The company has not provided a public business address.'}</p><p className="offer-note">This offer is published by {details.company.name}. Redemption is subject to the company’s terms below.</p></section>
+        <section className="card offer-section"><span className="section-label">About the company</span><h2>{details.company.name}</h2><dl className="offer-facts"><div><dt>Company status</dt><dd>Approved merchant</dd></div><div><dt>On CouponWorld since</dt><dd>{formatOfferDate(details.company.joined_at)}</dd></div></dl><h3>Business address</h3><p>{details.company.address || 'The company has not provided a public business address.'}</p><p className="offer-note">This offer is published by {details.company.name}. Redemption is subject to the company’s terms below.</p></section>
         <section className="card offer-section">
           <h2>Coupon details</h2>
           <p className="offer-prewrap">{card.description || 'No additional description has been provided.'}</p>

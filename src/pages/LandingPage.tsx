@@ -63,7 +63,7 @@ export default function LandingPage() {
                 lineHeight: 1.65,
               }}
             >
-              CouponVault blends marketplace discovery, secure redemption, and merchant controls into a
+              CouponWorld blends marketplace discovery, secure redemption, and merchant controls into a
               polished gifting platform that feels elevated from the first click to the final scan.
             </p>
 
@@ -226,7 +226,7 @@ export default function LandingPage() {
                   </div>
 
                   <div className="card-header">
-                    <span className="card-logo-text">COUPONVAULT PASS</span>
+                    <span className="card-logo-text">COUPONWORLD PASS</span>
                     <span className="card-header-lbl">Available balance</span>
                   </div>
 

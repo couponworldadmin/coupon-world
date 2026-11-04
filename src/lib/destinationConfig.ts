@@ -34,13 +34,13 @@ export const DESTINATIONS: Record<RedemptionDestination, DestinationMeta> = {
   },
   couponvault: {
     id: 'couponvault',
-    label: 'CouponVault & Storefronts',
-    shortLabel: 'CouponVault Store',
+    label: 'CouponWorld & Storefronts',
+    shortLabel: 'CouponWorld Store',
     icon: '🛍️',
-    description: 'Redeemable in the CouponVault web application and participating merchant checkout counters.',
+    description: 'Redeemable in the CouponWorld web application and participating merchant checkout counters.',
     badgeClass: 'badge-green',
     accentColor: '#10b981',
-    appNotice: 'Redeemable in CouponVault & In-Store',
+    appNotice: 'Redeemable in CouponWorld & In-Store',
   },
 };
 

@@ -142,7 +142,7 @@ export function Preloader() {
 
         {/* Brand Text */}
         <span style={{ fontWeight: 900, fontSize: "1.75rem", color: "#fff", letterSpacing: "-0.04em", marginBottom: "0.25rem" }}>
-          COUPON<span style={{ color: "var(--cyan)" }}>VAULT</span>
+          COUPON<span style={{ color: "var(--cyan)" }}>WORLD</span>
         </span>
         <span style={{ fontWeight: 600, fontSize: "0.75rem", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.2em", marginBottom: "2.5rem" }}>
           System Initialization

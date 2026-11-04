@@ -955,7 +955,7 @@ export default function AdminDashboard() {
                             <option value="">-- Unclassified --</option>
                             <option value="gaming">🎮 Gaming App</option>
                             <option value="lottery">🎰 Lottery App</option>
-                            <option value="couponvault">🛍️ CouponVault</option>
+                            <option value="couponvault">🛍️ CouponWorld</option>
                           </select>
                           <button
                             disabled={destinationLoading || !selectedDestination || selectedDestination === selectedCompany.redemption_destination}

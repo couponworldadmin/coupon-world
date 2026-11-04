@@ -380,7 +380,7 @@ export default function UserDashboard() {
         orderId:        orderData.orderId,
         amountMinorUnit: orderData.amount,
         currency:       orderData.currency,
-        name:           'Coupon Vault',
+        name:           'CouponWorld',
         description:    'Wallet top-up',
         prefillEmail:   user.email ?? '',
         theme:          '#6c63ff',

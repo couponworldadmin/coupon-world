@@ -679,7 +679,7 @@ function SupportWidgetInner({ user }: { user: { id: string; email?: string } }) 
             flexShrink: 0,
           }}>
             <span style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.25)' }}>
-              🔒 Secured · CouponVault Support
+              🔒 Secured · CouponWorld Support
             </span>
           </div>
         </div>

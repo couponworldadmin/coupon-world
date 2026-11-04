@@ -13,7 +13,7 @@ function getDestinationMetaSafe(dest?: string | null) {
   const map: Record<string, { label: string; shortLabel: string; icon: string; badgeClass: string }> = {
     gaming: { label: 'Gaming Application', shortLabel: 'Gaming App Only', icon: '🎮', badgeClass: 'badge-purple' },
     lottery: { label: 'Lottery Application', shortLabel: 'Lottery App Only', icon: '🎰', badgeClass: 'badge-amber' },
-    couponvault: { label: 'CouponVault Store', shortLabel: 'CouponVault Store', icon: '🛍️', badgeClass: 'badge-green' },
+    couponvault: { label: 'CouponWorld Store', shortLabel: 'CouponWorld Store', icon: '🛍️', badgeClass: 'badge-green' },
   };
   return map[dest.toLowerCase()] ?? null;
 }
