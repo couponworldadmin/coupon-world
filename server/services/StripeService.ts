@@ -30,6 +30,7 @@ export class StripeService implements PaymentServiceI {
     const paymentIntent = await this.stripe.paymentIntents.create({
       amount: amountMinorUnit,
       currency: currency.toLowerCase(),
+      description: `CouponWorld purchase - ${receiptId}`,
       automatic_payment_methods: { enabled: true },
       metadata: { receipt_id: receiptId },
     }, {

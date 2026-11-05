@@ -663,7 +663,14 @@ app.post('/api/v1/payments/create', writeLimiter, authenticateUserJWT, async (re
       currency: result.currency,
       receiptId,
       walletAmount: amount,
-      ...(couponQuote ? {giftCardId:couponQuote.giftCardId,keyId:gateway === 'razorpay' ? (process.env.RAZORPAY_KEY_ID || process.env.VITE_RAZORPAY_KEY_ID) : undefined} : {}),
+      ...(couponQuote ? {
+        giftCardId: couponQuote.giftCardId,
+        keyId: gateway === 'razorpay'
+          ? (process.env.RAZORPAY_KEY_ID || process.env.VITE_RAZORPAY_KEY_ID)
+          : gateway === 'stripe'
+          ? (process.env.STRIPE_PUBLISHABLE_KEY || process.env.VITE_STRIPE_PUBLISHABLE_KEY)
+          : undefined,
+      } : {}),
     });
   } catch (err: any) {
     console.error('[/payments/create]', err);
