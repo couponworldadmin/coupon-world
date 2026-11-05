@@ -860,6 +860,19 @@ export async function getUserProfileData(userId: string): Promise<{
 
   if (error) throw error;
 
+  // Proactively sweep and remove any legacy cv_paypal_email keys from browser localStorage
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      localStorage.removeItem(`cv_paypal_email_${userId}`);
+      for (let i = localStorage.length - 1; i >= 0; i--) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('cv_paypal_email_')) {
+          localStorage.removeItem(key);
+        }
+      }
+    }
+  } catch {}
+
   // Helper to extract user_metadata fallback if country_code is null in DB
   const getAuthMetadataFallback = async () => {
     try {

@@ -13,6 +13,7 @@ export default function Footer() {
           <Link to="/#marketplace" className="text-slate-300 hover:text-white">Marketplace</Link>
           <Link to="/#experience" className="text-slate-300 hover:text-white">Features</Link>
           <Link to="/#business" className="text-slate-300 hover:text-white">For merchants</Link>
+          <Link to="/terms" className="text-slate-300 hover:text-white">Terms &amp; Security Policy</Link>
           <Link to="/userlogin" className="text-slate-300 hover:text-white">Customer portal &amp; support</Link>
         </nav>
         <p className="text-slate-500 text-sm md:col-span-2">© {new Date().getFullYear()} CouponWorld. All rights reserved.</p>
