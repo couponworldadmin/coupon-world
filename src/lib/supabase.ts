@@ -858,8 +858,6 @@ export async function getUserProfileData(userId: string): Promise<{
     error = res2.error;
   }
 
-  const localEmail = localStorage.getItem(`cv_paypal_email_${userId}`);
-
   if (error) throw error;
 
   // Helper to extract user_metadata fallback if country_code is null in DB
@@ -911,7 +909,7 @@ export async function getUserProfileData(userId: string): Promise<{
 
     return {
       wallet_balance:     (data as any).wallet_balance ?? 0,
-      paypal_email:       (data as any).paypal_email ?? localEmail ?? null,
+      paypal_email:       (data as any).paypal_email ?? null,
       country,
       country_code:       countryCode,
       currency,
@@ -939,7 +937,7 @@ export async function getUserProfileData(userId: string): Promise<{
   if (insertError) throw insertError;
   return {
     wallet_balance:     newProfile?.wallet_balance ?? 0,
-    paypal_email:       localEmail,
+    paypal_email:       null,
     country:            metaFallback?.country ?? null,
     country_code:       metaFallback?.country_code ?? null,
     currency:           metaFallback?.currency ?? null,
@@ -976,18 +974,16 @@ export async function updateUserProfile(
 }
 
 export async function updateUserPaypalEmail(userId: string, email: string): Promise<void> {
-  // Save to localStorage as a fallback
-  localStorage.setItem(`cv_paypal_email_${userId}`, email);
-  
+  // Clear any legacy localStorage entry if present
   try {
-    const { error } = await supabase
-      .from("profiles")
-      .update({ paypal_email: email })
-      .eq("id", userId);
-    if (error) throw error;
-  } catch (err) {
-    console.warn("Failed to update paypal_email in Supabase, but saved to localStorage:", err);
-  }
+    localStorage.removeItem(`cv_paypal_email_${userId}`);
+  } catch {}
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({ paypal_email: email })
+    .eq("id", userId);
+  if (error) throw error;
 }
 
 // DEPRECATED: Do not use for financial transactions on the frontend
