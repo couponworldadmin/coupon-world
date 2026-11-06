@@ -620,7 +620,7 @@ export async function getUserGiftCards(userId: string): Promise<Coupon[]> {
     const res = await withTimeout(
       supabase
         .from("coupons")
-        .select("*, companies(name, address, prefix, status, logo_url), gift_cards(title, description, banner_image, value, price, terms)")
+        .select("*, companies(name, prefix, status), gift_cards(title, description, banner_image, value, price, terms)")
         .eq("issued_to", userId)
         .order("created_at", { ascending: false }),
       8000
