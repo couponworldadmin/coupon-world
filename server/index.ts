@@ -44,6 +44,7 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
 // ── App setup ────────────────────────────────────────────────────────────────
 const app = express();
+app.set('trust proxy', 1);
 
 // HIGH-05 / HIGH-08: Security headers via helmet
 app.use(helmet({
